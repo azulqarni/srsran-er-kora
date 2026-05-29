@@ -1,0 +1,59 @@
+# Build directories
+build/
+build-*/
+cmake-build*/
+out/
+edgeric-v2/muApp4/outputs
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+install_manifest.txt
+
+# Compiled objects and libraries
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+
+# Logs and temporary artifacts
+*.log
+*.tmp
+*.swp
+*.swo
+*.cache
+.DS_Store
+.AppleDouble
+.LSOverride
+*.orig
+*~
+
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# IDE / editor settings
+.vscode/
+.idea/
+*.code-workspace
+.envrc
+.editorconfig.local
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+edgeric-v2/muApp5/logs/
+edgeric-v2/muApp5/archive/

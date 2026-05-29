@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message SliceBudgets {
+  uint32 tti = 1;
+
+  message Budget {
+    uint32 slice_id = 1;
+    uint32 min_prb = 2;
+    uint32 max_prb = 3;
+    uint32 priority = 4; // optional override; 0 is valid
+  }
+
+  repeated Budget budgets = 2;
+}

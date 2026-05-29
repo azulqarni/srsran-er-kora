@@ -1,0 +1,129 @@
+cu_cp:
+  amf:
+    addr: 192.168.21.190
+    bind_addr: 192.168.21.110
+    supported_tracking_areas:
+      -  tac: 7
+         plmn_list:
+          - plmn: "22604"
+            tai_slice_support_list:
+              - sst: 1
+                sd: 0x01
+              - sst: 1
+                sd: 0x02
+
+hal:
+  eal_args: "--lcores (0-1)@(0-47)"
+
+ru_ofh:
+  t1a_max_cp_dl: 485                    # Optional INT (500). Sets T1a maximum value for downlink control-plane. Supported: [0 - 1960].
+  t1a_min_cp_dl: 274                    # Optional INT (258). Sets T1a minimum value for downlink control-plane. Supported: [0 - 1960].
+  t1a_max_cp_ul: 351                    # Optional INT (500). Sets T1a maximum value for uplink control-plane. Supported: [0 - 1960].
+  t1a_min_cp_ul: 140                    # Optional INT (258). Sets T1a minimum value for uplink control-plane. Supported: [0 - 1960].
+  t1a_max_up: 360                       # Optional INT (300).Sets T1a maximum value for uer-plane. Supported: [0 - 1960].
+  t1a_min_up: 149                        # Optional INT (85). Sets T1a minimum value for user-plane. Supported: [0 - 1960].
+  ta4_max: 346                            # Optional UINT (300). Sets the Ta4 maximum value for User-Plane. Supported: [0 - 1960].
+  ta4_min: 50                            # Optional UINT (85). Sets the Ta4 maximum value for User-Plane. Supported: [0 - 1960].
+
+  cells:                             # Optional TEXT. Sets the hardware specific cell configuration on a per cell basis.
+
+    -                                  # Cell 1
+      network_interface: 0000:af:01.0    # Optional TEXT (enp1s0f0). Sets the ethernet network interface name for the RU when not using DPDK, or PCIe identifier when using DPDK. Format: a string, e.g. [interface_name].
+      ru_mac_addr: 40:a6:b7:a6:01:20     # Optional TEXT (70:b3:d5:e1:5b:06). Sets the RU MAC address. Format: a string, e.g. [AA:BB:CC:DD:11:22:33].
+      du_mac_addr: 00:11:22:33:44:66     # Optional TEXT (00:11:22:33:00:77). Sets the DU MAC address. Format: a string, e.g. [AA:BB:CC:DD:11:22:33].
+      vlan_tag_cp: 5                     # Optional UINT (1). Sets the VLAN tag value for C-Plane.
+      vlan_tag_up: 5                     # Optional UINT (1). Sets the VLAN tag value for U-Plane.
+      prach_port_id: [4, 5, 6, 7]        # Optional UINT (4). Sets the RU PRACH eAxC port ID. Supported: [0 - 65535].
+      dl_port_id:    [0, 1, 2, 3]        # Optional UINT (0, 1). Sets the RU downlink eAxC port ID. Format: vector containing all DL eXaC ports, e.g. [0, ...\ , N].
+      ul_port_id:    [0, 1, 2, 3]             # Optional UINT (0). Sets the RU uplink eAxC port ID. Supported: [0 - 65535].
+      enable_ul_static_compr_hdr: 1      # Optional BOOLEAN (1). Uplink static compression header enabled flag. Supported: [0 . 1].
+      compr_method_ul: bfp               # Optional TEXT (bfp). Sets the uplink compression method. Supported: [none, bfp, bfp selective, block scaling, mu law, modulation, modulation selective].
+      compr_bitwidth_ul: 9               # Optional UINT (9). Sets the uplink compression bit width. Supported: [1 - 16].
+      enable_dl_static_compr_hdr: 1      # Optional BOOLEAN (1). Downlink static compression header enabled flag. Supported: [0 . 1].
+      compr_method_dl: bfp               # Optional TEXT (bfp). Sets the downlink compression method. Supported: [none, bfp, bfp selective, block scaling, mu law, modulation, modulation selective].
+      compr_bitwidth_dl: 9               # Optional UINT (9). Sets the downlink compression bit width. Supported: [1 - 16].
+      compr_method_prach: bfp            # Optional TEXT (none). Sets the PRACH compression method. Supported: [none, bfp, bfp selective, block scaling, mu law, modulation, modulation selective].
+      compr_bitwidth_prach: 9            # Optional UINT (16). Sets the PRACH compression bit width. Supported [1 - 16].
+
+cell_cfg:
+  plmn: "22604"                            # PLMC MCC = 226, PLMN MNC = 04 in CoreSIM AMF-1 node settings
+  dl_arfcn: 637336                         # Required UINT (536020). Sets the Downlink ARFCN.
+  channel_bandwidth_MHz: 100               # Required UINT (20). Sets the channel Bandwidth in MHz, the number of PRBs will be derived from this. Supported: [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100].
+  common_scs: 30                           # Required UINT (15). Sets the subcarrier spacing in KHz to be used by the cell. Supported: [15, 30].
+  nof_antennas_dl: 4                       # Optional UINT (1). Sets the number of antennas for downlink transmission. Supported: [1, 2, 4].
+  nof_antennas_ul: 4                       # Optional UINT (1). Sets the number of antennas for uplink transmission. Supported: [1, 2, 4].
+  tdd_ul_dl_cfg:
+    dl_ul_tx_period: 10                    # Optional INT (10). Sets the TDD pattern periodicity in slots. The combination of this value and the chosen numerology must lead to a TDD periodicity of 0.5, 0.625, 1, 1.25, 2, 2.5, 3, 4, 5 or 10 milliseconds. Supported: [2 - 80].
+    nof_dl_slots: 7                        # Optional INT (6). Number of consecutive full Downlink slots. Supported: [0-80].
+    nof_dl_symbols: 12                     # Optional INT (8). Number of Downlink symbols at the beginning of the slot following full Downlink slots. Supported: [0-13].
+    nof_ul_slots: 2                        # Optional INT (3). Number of consecutive full Uplink slots. Supported: [0 - 80].
+    nof_ul_symbols: 0                      # Optional INT (0). Number of Uplink symbols at the end of the slot preceding the first full Uplink slot. Supported: [0-13].
+  pdsch:
+    mcs_table: qam64
+  pusch:
+    mcs_table: qam64
+  slicing: # Optional TEXT. Configure network slicing options. This can only be set via the configuration file.
+    - # Configure Slice 1
+      sst: 1 # Optional UINT (1). Sets the Slice Service Type. Supported: [0 - 255].
+      sd: 0x01 # Optional UINT (0). Sets the Service Differentiator. Supported: [0-16777215].
+      sched_cfg: # Scheduler configuration for the slice
+        min_prb_policy_ratio: 0 # Optional UINT (0). Sets the minimum percentage of PRBs to be allocated to the slice. Supporte
+        max_prb_policy_ratio: 87 # Optional UINT (100). Sets the maximum percentage of PRBs to be allocated to the slice. Support
+    - # Configure Slice 2
+      sst: 1
+      sd: 0x02
+      sched_cfg:
+        min_prb_policy_ratio: 0
+        max_prb_policy_ratio: 10
+    - # Configure Slice 3
+      sst: 1
+      sd: 0x03
+      sched_cfg:
+        min_prb_policy_ratio: 0
+        max_prb_policy_ratio: 1
+    - # Configure Slice 4
+      sst: 1
+      sd: 0x04
+      sched_cfg:
+        min_prb_policy_ratio: 0
+        max_prb_policy_ratio: 1
+    - # Configure Slice 5
+      sst: 1
+      sd: 0x05
+      sched_cfg:
+        min_prb_policy_ratio: 0
+        max_prb_policy_ratio: 1
+
+log:
+# All gNB layers and components can be configured independently to output at various levels of detail. Logs can be configured to the following levels (from lowest to highest levels of detail):
+# none, error, warning, info, debug
+  filename: /tmp/srsgnb.log              # Optional TEXT (/tmp/gnb.log). File path for logs. Logs can be redirected to stdout by setting the filename to "stdout".
+  all_level: warning                    # Optional TEXT (warning). Sets a common log level across PHY, MAC, RLC, PDCP, RRC, SDAP, NGAP and GTPU layers.
+  lib_level: warning                    # Optional TEXT (warning). Sets the generic log level.
+  e2ap_level: warning                   # Optional TEXT (warning). Sets the E2AP log level.
+  #metrics_level: none                   # Optional TEXT (none). Sets the metrics log level.
+  mac_level: warning                    # Optional TEXT (warning). Sets the MAC log level.
+  rlc_level: warning                    # Optional TEXT (warning). Sets the RLC log level.
+  f1ap_level: warning                   # Optional TEXT (warning). Sets the F1AP log level.
+  f1u_level: warning                    # Optional TEXT (warning). Sets the F1u log level.
+  gtpu_level: warning                   # Optional TEXT (warning). Sets the GTPU log level.
+  du_level: warning                     # Optional TEXT (warning). Sets the DU log level.
+  f1ap_json_enabled: false              # Optional BOOLEAN (false). Enables the JSON logging of F1AP PDUs. Supported: [false, true].
+  fapi_level: warning                   # Optional TEXT (warning). Sets FAPI log level.
+  hal_level: warning                    # Optional TEXT (warning). Sets the HAL log level.
+  broadcast_enabled: false              # Optional BOOLEAN (false). Enables logging in the PHY and MAC layer of broadcast messages and all PRACH opportunities. Supported: [false, true].
+  hex_max_size: 0                       # Optional UINT (0). Sets maximum number of bytes to print for hex messages. Supported: [0 - 1024]
+  ofh_level:     info                   # Optional TEXT (warning). Sets Open Fronthaul log level.
+  phy_level: warning                    # Optional TEXT (warning). Sets PHY log level.
+
+pcap:
+  f1ap_filename: /tmp/gnb_f1ap.pcap     # Optional TEXT (/tmp/gnb_f1ap.pcap). Path for F1AP PCAPs.
+  f1ap_enable: false                    # Optional BOOLEAN (false). Enable/disable F1AP packet capture. Supported: [false, true].
+  f1u_filename: /tmp/gnb_f1u.pcap       # Optional TEXT (/tmp/gnb_f1ap.pcap). Path for F1AP PCAPs.
+  f1u_enable: false                     # Optional BOOLEAN (false). Enable/disable F1AP packet capture. Supported: [false, true].
+  rlc_filename: /tmp/gnb_rlc.pcap       # Optional TEXT (tmp/gnb_rlc.pcap). Path for RLC PCAPs.
+  rlc_rb_type: all                      # Optional TEXT. Sets the RLC PCAP RB type. Supported: [all, srb, drb].
+  rlc_enable: false                     # Optional BOOLEAN (false). Enable/disable RLC packet capture. Supported: [false, true].
+  mac_filename: /tmp/gnb_mac.pcap       # Optional TEXT (/tmp/gnb_mac.pcap). Path for MAC PCAPs.
+  mac_type: udp                         # Optional TEXT (udp). Sets the MAC PCAP pcap type. Supported: [DLT or UDP].
+  mac_enable: false                     # Optional BOOLEAN (false). Enable/disable MAC packet capture. Supported: [false, true].            # Optional BOOLEAN (false). Enable/disable E2AP packet capture. Supported: [false, true].

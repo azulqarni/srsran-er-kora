@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message SliceMetrics {
+  uint32 tti = 1;
+
+  message Slice {
+    uint32 slice_id = 1;
+    uint32 cfg_min_prb = 2;
+    uint32 cfg_max_prb = 3;
+    uint32 cfg_priority = 4;
+    uint32 dl_rbs_used = 5;
+    uint32 ul_rbs_used = 6;
+    float avg_dl_rbs_per_slot = 7;
+    float avg_ul_rbs_per_slot = 8;
+    uint32 hol_slots = 9;
+  }
+
+  repeated Slice slices = 2;
+}
