@@ -1,0 +1,2 @@
+# Known-compatible PyArrow release for the pinned legacy Ray/RLlib stack.
+pyarrow==14.0.2

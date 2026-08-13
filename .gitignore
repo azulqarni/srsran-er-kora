@@ -11,6 +11,7 @@ CMakeFiles/
 cmake_install.cmake
 CTestTestfile.cmake
 Testing/
+compile_commands.json
 install_manifest.txt
 
 # Compiled objects and libraries
@@ -24,6 +25,14 @@ install_manifest.txt
 *.dylib
 *.dll
 *.exe
+
+# Generated Protobuf bindings (canonical schemas live in lib/protobufs)
+*.pb.cc
+*.pb.h
+*_pb2.py
+*_pb2.pyi
+*_pb2_grpc.py
+*_pb2_grpc.pyi
 
 # Logs and temporary artifacts
 *.log
@@ -41,8 +50,23 @@ install_manifest.txt
 __pycache__/
 *.py[cod]
 .venv/
+.venv-*/
 venv/
 env/
+.coverage
+htmlcov/
+
+# Local configuration and runtime output
+.env
+.env.*
+!.env.example
+!**/.env.example
+/logs/
+dump.rdb
+/edgeric-v2/results/
+/edgeric-v2/muApp1/rllog.txt
+/edgeric-v2/stream_rl/rewards.csv
+/edgeric-v2/stream_rl/evaluation_curve_genz*.pdf
 
 # IDE / editor settings
 .vscode/

@@ -1,0 +1,8 @@
+# Imports: google.protobuf, zmq, and numpy (send_mcs.py/send_weight.py).
+# Protobuf 6.33 supports the distro protoc 3.21 generator used here.
+protobuf==6.33.6
+pyzmq==27.1.0
+
+# Keep the legacy np.int alias for full muApps; use a Python 3.12 wheel in base.
+numpy==1.23.5; python_version < "3.12"
+numpy==1.26.4; python_version >= "3.12"

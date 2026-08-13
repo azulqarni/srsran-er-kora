@@ -1,0 +1,64 @@
+# This site configuration defines a single FDD band 3 cell with 10 MHz bandwidth
+# and 15 kHz subcarrier spacing. A USRP N310 is configured as the Split-8 RF frontend
+# using external clock and time references.
+
+cu_cp:
+  amf:
+    addr: 192.168.1.3
+    port: 38412
+    bind_addr: 192.168.1.1
+    supported_tracking_areas:
+      - tac: 1
+        plmn_list:
+          - plmn: "00101"
+            tai_slice_support_list:
+              - sst: 1
+
+ru_sdr:
+  device_driver: uhd
+  device_args: type=n3xx,addr=192.168.10.2,master_clock_rate=122.88e6,subdev=A:0,tx_ant=TX/RX,rx_ant=RX2,clock_source=external,time_source=external
+  clock: external
+  sync: external
+  srate: 15.36
+  tx_gain: 20
+  rx_gain: 20
+
+cell_cfg:
+  dl_arfcn: 368640
+  band: 3
+  channel_bandwidth_MHz: 10
+  common_scs: 15
+  plmn: "00101"
+  tac: 1
+  pci: 1
+  pdcch:
+    common:
+      ss0_index: 0                  # Set search space zero index to match srsUE capabilities
+      coreset0_index: 6            # Set search CORESET Zero index to match srsUE capabilities
+    dedicated:
+      ss2_type: common              # Search Space type, has to be set to common
+      dci_format_0_1_and_1_1: false # Set correct DCI format (fallback)
+  prach:
+    prach_config_index: 1           # Sets PRACH config to match what is expected by srsUE
+  pdsch:
+    mcs_table: qam64
+  pusch:
+    mcs_table: qam64
+
+log:
+  filename: /tmp/gnb.log
+  all_level: info
+  phy_level: debug
+pcap:
+  mac_enable: false
+  mac_filename: /tmp/gnb_mac.pcap
+  ngap_enable: false
+  ngap_filename: /tmp/gnb_ngap.pcap
+
+metrics:
+  enable_json: true
+
+remote_control:
+  enabled: true
+  bind_addr: 127.0.0.1
+  port: 8001

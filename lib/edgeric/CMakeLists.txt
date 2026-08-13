@@ -1,33 +1,46 @@
-# # Create a library from the edgeric source files
-# add_library(edgeric STATIC edgeric.cpp)
-
-# # Include the current directory for header files
-# target_include_directories(edgeric PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-set(SRCS
-    edgeric.cpp
-    control_mcs.pb.cc # Add the generated Protobuf source file
-    control_weights.pb.cc
-    metrics.pb.cc
-    slice_metrics.pb.cc
-    slice_budgets.pb.cc
+set(EDGERIC_PROTO_DIR "${PROJECT_SOURCE_DIR}/lib/protobufs")
+set(EDGERIC_PROTO_FILES
+    "${EDGERIC_PROTO_DIR}/control_mcs.proto"
+    "${EDGERIC_PROTO_DIR}/control_weights.proto"
+    "${EDGERIC_PROTO_DIR}/metrics.proto"
+    "${EDGERIC_PROTO_DIR}/slice_metrics.proto"
+    "${EDGERIC_PROTO_DIR}/slice_budgets.proto"
 )
 
-# Create a static library from the edgeric source files
-# add_library(edgeric STATIC edgeric.cpp)
-add_library(edgeric STATIC ${SRCS})
+protobuf_generate(
+    LANGUAGE cpp
+    OUT_VAR EDGERIC_PROTO_GENERATED
+    PROTOC_OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}"
+    APPEND_PATH
+    PROTOS ${EDGERIC_PROTO_FILES}
+)
 
-# Include the current directory for header files
-# target_include_directories(edgeric PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(edgeric PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${Protobuf_INCLUDE_DIRS})
+add_library(edgeric STATIC edgeric.cpp ${EDGERIC_PROTO_GENERATED})
 
-# Link the ZeroMQ and Protocol Buffers libraries to the edgeric library
-target_link_libraries(edgeric PUBLIC ${ZEROMQ_LIBRARIES} ${Protobuf_LIBRARIES})
+target_include_directories(edgeric
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+)
+target_include_directories(edgeric SYSTEM
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+        ${Protobuf_INCLUDE_DIRS}
+        ${ZEROMQ_INCLUDE_DIRS}
+        ${CPPZMQ_INCLUDE_DIR}
+)
+
+target_link_libraries(edgeric PUBLIC ${ZEROMQ_LIBRARIES} protobuf::libprotobuf)
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    foreach(EDGERIC_PROTO_OUTPUT IN LISTS EDGERIC_PROTO_GENERATED)
+        if (EDGERIC_PROTO_OUTPUT MATCHES "\\.pb\\.cc$")
+            set_source_files_properties(
+                "${EDGERIC_PROTO_OUTPUT}"
+                PROPERTIES COMPILE_OPTIONS "-Wno-error;-Wno-array-bounds;-Wno-extra-semi"
+            )
+        endif ()
+    endforeach()
+endif ()
 
 # Add to exported libraries if ENABLE_EXPORT is on
 ADD_TO_EXPORTED_LIBS(edgeric)
-
-########################################################################
-# Disable specific warnings for Protobuf files
-########################################################################
-set_source_files_properties(control_mcs.pb.cc control_weights.pb.cc metrics.pb.cc slice_metrics.pb.cc slice_budgets.pb.cc PROPERTIES COMPILE_FLAGS "-Wno-array-bounds -Wno-extra-semi")

@@ -29,3 +29,4 @@ set(SOURCES
 )
 
 add_library(ue_sched OBJECT ${SOURCES})
+target_link_libraries(ue_sched PRIVATE edgeric)

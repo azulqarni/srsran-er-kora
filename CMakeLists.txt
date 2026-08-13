@@ -429,8 +429,7 @@ endif (ENABLE_UHD)
 # Yaml-cpp
 find_package(YAMLCPP)
 if (YAMLCPP_FOUND)
-    include_directories(${YAMLCPP_INCLUDE_DIR})
-    link_directories(${YAMLCPP_LIBRARY})
+    include_directories(SYSTEM ${YAMLCPP_INCLUDE_DIR})
     sbom_add(
         PACKAGE            "yaml-cpp"
         DOWNLOAD_LOCATION  "https://github.com/jbeder/yaml-cpp"
@@ -443,25 +442,36 @@ else (YAMLCPP_FOUND)
 endif (YAMLCPP_FOUND)
 
 # ZeroMQ
-if (ENABLE_ZEROMQ)
-    find_package(ZeroMQ)
-    if (ZEROMQ_FOUND)
-        include_directories(${ZEROMQ_INCLUDE_DIRS})
-        link_directories(${ZEROMQ_LIBRARY_DIRS})
-        sbom_add(
-            PACKAGE            "ZeroMQ"
-            DOWNLOAD_LOCATION  "https://zeromq.org/"
-            SUPPLIER           "ZeroMQ project"
-            LICENSE            "LGPL-3.0-or-later"
-            VERSION            ${ZEROMQ_PKG_VERSION}
-        )
-    endif (ZEROMQ_FOUND)
-else (ENABLE_ZEROMQ)
-    unset(ZEROMQ_FOUND CACHE)
-endif (ENABLE_ZEROMQ)
+if (NOT ENABLE_ZEROMQ)
+    message(FATAL_ERROR
+        "This EdgeRIC-enabled fork requires ZeroMQ. Reconfigure with -DENABLE_ZEROMQ=ON.")
+endif ()
+
+find_package(ZeroMQ)
+if (NOT ZEROMQ_FOUND)
+    message(FATAL_ERROR
+        "ZeroMQ is required by EdgeRIC. Install libzmq3-dev and reconfigure.")
+endif ()
+
+find_path(CPPZMQ_INCLUDE_DIR NAMES zmq.hpp HINTS ${ZEROMQ_INCLUDE_DIRS})
+if (NOT CPPZMQ_INCLUDE_DIR)
+    message(FATAL_ERROR
+        "The cppzmq header zmq.hpp is required by EdgeRIC. Install cppzmq-dev and reconfigure.")
+endif ()
+
+include_directories(SYSTEM ${ZEROMQ_INCLUDE_DIRS} ${CPPZMQ_INCLUDE_DIR})
+sbom_add(
+    PACKAGE            "ZeroMQ"
+    DOWNLOAD_LOCATION  "https://zeromq.org/"
+    SUPPLIER           "ZeroMQ project"
+    LICENSE            "LGPL-3.0-or-later"
+    VERSION            ${ZEROMQ_PKG_VERSION}
+)
 
 # Protocol Buffers
 find_package(Protobuf REQUIRED)
+include(CheckProtobufToolchain)
+srsran_check_protobuf_toolchain()
 
 if (ENABLE_LIBNUMA)
     find_package(NUMA)
@@ -493,7 +503,8 @@ if (ENABLE_DPDK)
         )
     else ()
         unset(DPDK_FOUND CACHE)
-        message(WARNING "Building without DPDK support as DPDK dependencies could not be resolved")
+        message(FATAL_ERROR
+            "ENABLE_DPDK=ON, but DPDK >= ${DPDK_MIN_VERSION} could not be resolved")
     endif (DPDK_FOUND)
 else (ENABLE_DPDK)
     unset(DPDK_FOUND CACHE)
@@ -553,8 +564,10 @@ if (CCACHE_EXECUTABLE)
 endif ()
 
 include(CTest)
-execute_process(COMMAND sed -i "s|MemoryCheckCommandOptions: |MemoryCheckCommandOptions: --verbose --trace-children=yes --time-stamp=yes --leak-check=full --show-leak-kinds=all --show-reachable=yes --exit-on-first-error=yes --error-exitcode=22 --suppressions=${CMAKE_SOURCE_DIR}/.memcheck-suppressions|" DartConfiguration.tcl
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+if(BUILD_TESTING AND EXISTS "${CMAKE_BINARY_DIR}/DartConfiguration.tcl")
+    execute_process(COMMAND sed -i "s|MemoryCheckCommandOptions: |MemoryCheckCommandOptions: --verbose --trace-children=yes --time-stamp=yes --leak-check=full --show-leak-kinds=all --show-reachable=yes --exit-on-first-error=yes --error-exitcode=22 --suppressions=${CMAKE_SOURCE_DIR}/.memcheck-suppressions|" DartConfiguration.tcl
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+endif()
 
 include_directories(include)
 include_directories(external/fmt/include)

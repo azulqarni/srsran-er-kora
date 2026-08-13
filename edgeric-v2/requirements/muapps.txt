@@ -1,0 +1,17 @@
+-r base.txt
+-c constraints-muapps.txt
+
+# Imports across muApp1, muApp2, muApp3, stream_rl, and core/trpo.py, plus the
+# Kaleido backend required by the executed Plotly write_image calls.
+# These legacy-compatible pins require CPython 3.10 or 3.11.
+gym==0.23.1
+hydra-core==1.3.2
+kaleido==0.2.1
+matplotlib==3.7.5
+pandas==1.5.3
+Pillow==10.4.0
+plotly==5.24.1
+ray[rllib]==2.9.3
+redis==5.2.1
+scipy==1.10.1
+torch==2.5.1

@@ -1,23 +1,27 @@
-This directory stores generated Python protobuf stubs used by `edgeric-v2`.
+# EdgeRIC Python Protobuf bindings
 
-The canonical `.proto` sources live in:
+The canonical, hand-authored schemas live in the repository's
+`lib/protobufs/` directory. The setup workflow generates disposable
+`*_pb2.py` modules here because the existing EdgeRIC applications import this
+directory directly.
 
-- `/home/keysight/srsRAN_ER/lib/protobufs`
-
-Do not edit generated `*_pb2.py` files by hand. Regenerate them from the
-canonical sources with:
+From any current directory, create the venv and generate the bindings with:
 
 ```bash
-cd /home/keysight/srsRAN_ER/edgeric-v2/protobufs
-protoc -I /home/keysight/srsRAN_ER/lib/protobufs \
-  --python_out=. \
-  metrics.proto \
-  slice_metrics.proto \
-  slice_budgets.proto \
-  control_mcs.proto \
-  control_weights.proto
+/path/to/srsran-er-kora/scripts/setup_edgeric_venv.sh
 ```
 
-Historical local protobuf variants are archived in:
+After initial setup, regenerate or smoke-test without reinstalling packages:
 
-- `/home/keysight/srsRAN_ER/edgeric-v2/protobufs/original`
+```bash
+./scripts/setup_edgeric_venv.sh --generate-only
+./scripts/setup_edgeric_venv.sh --smoke-only
+```
+
+The generation helper first verifies that `protoc`, pkg-config, CMake's
+headers/runtime, and the venv's Python Protobuf runtime are compatible. Generated
+modules are ignored and must not be committed. Keep `__init__.py`.
+
+`original/` contains historical schema sources. Some differ from the canonical
+wire contract; preserve them for reference and never use them as generation
+inputs.

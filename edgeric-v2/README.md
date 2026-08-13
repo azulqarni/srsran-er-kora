@@ -1,7 +1,17 @@
 ## Running EdgeRIC 
  
+Create the repository-local environment from the repository root first. The
+full muApps require CPython 3.10 or 3.11:
+
 ```bash
-cd edgeric
+./scripts/setup_edgeric_venv.sh --venv .venv-muapps --python python3.11 --with-muapps
+source .venv-muapps/bin/activate
+```
+
+The commands below start from the repository root unless a snippet changes
+directory.
+
+```bash
 redis-server
 ```
 
@@ -28,10 +38,8 @@ edgeric_messenger
 #### To test custom scheduling and MCS control
 Edit the python files to chose fixed scheduling and mcs actions  
 ```bash
-sudo python3 send_mcs.py
-```
-```bash
-sudo python3 send_weight.py
+python edgeric-v2/send_mcs.py
+python edgeric-v2/send_weight.py
 ```
 
 ### Running muApp1 - downlink scheduler
@@ -39,10 +47,9 @@ sudo python3 send_weight.py
 **Weight Based abstraction of control** The scheduling logic in ``srsenb`` is updated to support a weight based abstraction to allocate the number of RBGs to allocate per UE. A weight based abstraction allows us to implement any kind of scheduling policy where we provide a weight ``w_i`` for each UE, the RAN then allocates ``[w_i*available_rbgs]`` RBGs to each UE.     
 
 ```bash
-cd edgeric
-cd muApp1
+cd edgeric-v2/muApp1
 redis-cli set scheduling_algorithm "Max CQI" # setting an initial scheduler
-python3 muApp1_run_DL_scheduling.py # sudo not required if you ae running in docker
+python muApp1_run_DL_scheduling.py
 ```
 #### Setting the scheduler algorithm manually
 Set the scheduling algorithm you want to run:
@@ -133,8 +140,8 @@ total system throughput: 11.743776
 This muApp will help us see the RT-E2 Report Message from the RAN and the RT-E2 Policy message sent to RAN  
 
 ```bash
-cd edgeric/muApp3
-python3 muApp3_monitor_terminal.py 
+cd edgeric-v2/muApp3
+python muApp3_monitor_terminal.py
 ```
 **What to observe**  
 ```bash
@@ -161,8 +168,8 @@ We are training a PPO agent with the objective of throughput maximization in thi
 ##### Usage
 
 ```bash
-cd muApp2
-python3 muApp2_train_RL_DL_scheduling.py # --config-name=edge_ric
+cd edgeric-v2/muApp2
+python muApp2_train_RL_DL_scheduling.py # --config-name=edge_ric
 ```
 
 ##### muApp2_train_RL_DL_scheduling.py
