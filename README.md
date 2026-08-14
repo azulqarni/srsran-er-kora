@@ -13,8 +13,9 @@ authoritative for this fork. The inherited material remains under
 
 ## Setup
 
-Supported package-manager targets are Ubuntu 24.04 LTS and Debian 12. Run the
-following from the repository root for the bundled Split-7.2/DPDK configuration:
+Supported package-manager targets are Ubuntu 24.04 LTS and Debian 12/13. Run
+the following from the repository root for the bundled Split-7.2/DPDK
+configuration:
 
 1. Install the native build dependencies, including optional DPDK support.
 
@@ -40,7 +41,8 @@ DPDK-specific. To build for a different, non-DPDK radio configuration, omit
 `--with-dpdk` and `--dpdk`. Use
 `./scripts/install_system_deps.sh --dry-run` to inspect the apt commands first.
 
-The base Python environment supports CPython 3.10–3.12. Activate it with:
+The base Python environment supports CPython 3.10–3.13, including Debian 13's
+default CPython 3.13. Activate it with:
 
 ```bash
 source .venv/bin/activate
@@ -54,11 +56,35 @@ separate environment:
 source .venv-muapps/bin/activate
 ```
 
+Debian 13's default CPython 3.13 supports the base environment only. The
+installer does not add third-party Python repositories; provide a separately
+managed CPython 3.10 or 3.11 interpreter if the legacy muApp stack is needed.
+
 The dependency installer does not configure hugepages, IOMMU/VFIO, NIC
 binding, CPU isolation, or device permissions. Configure those for the target
 host before using DPDK. This repository does not require an external ROHC
 installation. Run each script with `--help` for optional UHD, NUMA, Redis, GUI,
 test, and build-tool support.
+
+### Compatibility safety gates
+
+An OS or base-Python “not validated” error marks an untested combination, not
+a demonstrated incompatibility. Do not delete or broadly widen the exact
+allowlists. Record the target details first:
+
+```bash
+cat /etc/os-release
+uname -m
+python3 -VV
+```
+
+For a new OS release, verify the required and selected optional package names,
+then add only its exact `ID:VERSION_ID` after review and run the installer dry
+run plus a clean native build. For a new Python minor, use `--python PATH` with
+an installed supported CPython, or validate the pinned wheels, generated
+Protobuf bindings, and smoke test before extending the exact version case. The
+`--with-muapps` limit is different: it reflects known legacy API and dependency
+incompatibilities rather than an untested version.
 
 ## Running
 

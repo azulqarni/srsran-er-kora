@@ -3,6 +3,8 @@
 protobuf==6.33.6
 pyzmq==27.1.0
 
-# Keep the legacy np.int alias for full muApps; use a Python 3.12 wheel in base.
+# Keep NumPy 1.23 for the legacy muApps, while selecting compatible base wheels
+# for the default Python versions on Ubuntu 24.04 and Debian 13.
 numpy==1.23.5; python_version < "3.12"
-numpy==1.26.4; python_version >= "3.12"
+numpy==1.26.4; python_version == "3.12"
+numpy==2.2.6; python_version == "3.13"

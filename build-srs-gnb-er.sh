@@ -201,7 +201,7 @@ fi
 declare -A header_packages=(
   [fftw3.h]=libfftw3-dev
   [google/protobuf/message.h]=libprotobuf-dev
-  [mbedtls/config.h]=libmbedtls-dev
+  [mbedtls/md.h]=libmbedtls-dev
   [netinet/sctp.h]=libsctp-dev
   [yaml-cpp/yaml.h]=libyaml-cpp-dev
   [zmq.h]=libzmq3-dev

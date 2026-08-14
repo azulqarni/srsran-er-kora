@@ -74,14 +74,14 @@ source /etc/os-release
 os_id="${ID:-}"
 os_version="${VERSION_ID:-}"
 case "${os_id}:${os_version}" in
-  ubuntu:24.04|debian:12)
+  ubuntu:24.04|debian:12|debian:13)
     ;;
   *)
-    printf 'error: unsupported operating system: %s %s\n' \
-      "${PRETTY_NAME:-$os_id}" "$os_version" >&2
-    printf 'Supported: Ubuntu 24.04 LTS and Debian 12.\n' >&2
-    printf 'Review the package arrays in %s before using another release.\n' \
-      "${BASH_SOURCE[0]}" >&2
+    printf 'error: dependency installer not validated on %s (ID=%s, VERSION_ID=%s).\n' \
+      "${PRETTY_NAME:-unknown}" "${os_id:-unknown}" "${os_version:-unknown}" >&2
+    printf 'Validated targets: Ubuntu 24.04 LTS and Debian 12/13.\n' >&2
+    printf 'This safety stop is not proof of incompatibility; do not bypass the allowlist blindly.\n' >&2
+    printf 'See %s/README.md#compatibility-safety-gates for the validation path.\n' "$repo_root" >&2
     exit 1
     ;;
 esac

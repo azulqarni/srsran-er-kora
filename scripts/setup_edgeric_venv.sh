@@ -36,7 +36,7 @@ Options:
   --clean            Remove only the selected, verified repository venv
   -h, --help         Show this help
 
-The base environment supports CPython 3.10-3.12 and covers EdgeRIC messaging,
+The base environment supports CPython 3.10-3.13 and covers EdgeRIC messaging,
 testers, and the slice telemetry/control muApps. --with-muapps requires
 CPython 3.10 or 3.11 because protected legacy code imports the removed stdlib
 imp module and uses NumPy's removed np.int alias.
@@ -181,11 +181,14 @@ validate_python_version() {
   fi
   version="$(python_minor "$python_bin")"
   case "$version" in
-    3.10|3.11|3.12)
+    3.10|3.11|3.12|3.13)
       ;;
     *)
-      printf 'error: EdgeRIC supports CPython 3.10-3.12; found %s at %s.\n' \
+      printf 'error: base EdgeRIC setup not validated with CPython %s at %s.\n' \
         "$version" "$python_bin" >&2
+      printf 'Validated base versions: CPython 3.10-3.13.\n' >&2
+      printf 'This safety stop is not proof of incompatibility; use --python PATH with a supported\n' >&2
+      printf 'interpreter or see %s/README.md#compatibility-safety-gates before extending it.\n' "$repo_root" >&2
       return 1
       ;;
   esac
