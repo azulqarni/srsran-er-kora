@@ -188,14 +188,14 @@ for name in (
     importlib.import_module(name)
 
 from protobufs import control_mcs_pb2, control_weights_pb2, metrics_pb2
-messages = (
-    control_mcs_pb2.mcs_control,
-    control_weights_pb2.SchedulingWeights,
-    metrics_pb2.Metrics,
+bindings = (
+    (control_mcs_pb2, control_mcs_pb2.mcs_control),
+    (control_weights_pb2, control_weights_pb2.SchedulingWeights),
+    (metrics_pb2, metrics_pb2.Metrics),
 )
-for message_type in messages:
-    if not Path(sys.modules[message_type.__module__].__file__).resolve().is_relative_to(generated):
-        raise RuntimeError(f"binding escaped legacy venv: {message_type.__module__}")
+for binding_module, message_type in bindings:
+    if not Path(binding_module.__file__).resolve().is_relative_to(generated):
+        raise RuntimeError(f"binding escaped legacy venv: {binding_module.__name__}")
     original = message_type()
     decoded = message_type()
     decoded.ParseFromString(original.SerializeToString())
