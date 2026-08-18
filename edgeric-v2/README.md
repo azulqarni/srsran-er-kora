@@ -1,9 +1,27 @@
+## Deployment context
+
+![KORA-oriented EdgeRIC deployment with alternative core, CU, DU, and RU placements](images/kora_edgeric_architecture.png)
+
+The figure shows the KORA Split 7.2 setup around the EdgeRIC RT-E2 interface.
+The 5G core may come from Keysight CoreSIM, a Keysight CuSIM deployment, or
+another compatible implementation; the CU may be supplied by CuSIM or
+OCUDU/srsRAN. OCUDU/srsRAN can run its CU and DU separately over F1 or together
+in one gNB process. In Split 7.2, the O-DU and O-RU are distinct logical
+functions joined by O-RAN Open Fronthaul, with Keysight RuSIM providing the
+O-RU and UE side. The UvA/SNE testbed instead uses Split 8: the PHY stays in
+the gNB and an Ettus Research USRP N310 provides its RF front end through UHD.
+The N310 is an SDR in this split, not the Split 7.2 O-RU shown above; srsUE with
+a USRP B210 provides the UE side.
+
 ## Included EdgeRIC muApps (optional)
 
 This repository extends the EdgeRIC-on-5G version used as its starting point
 and retains its per-UE muApps as optional functionality. The gNB, inter-slice
 RT-E2 extensions, and muApp5 use the base environment. The original README
 follows verbatim; this preface records current setup and validation.
+
+For the N310 radio workflow and EdgeRIC telemetry/control walkthrough, see
+[N310 and EdgeRIC demo](N310_EDGERIC_DEMO.md).
 
 ### Setup
 

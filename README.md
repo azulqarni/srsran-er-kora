@@ -11,6 +11,28 @@ extends it with inter-slice telemetry and control. The workflow below is
 authoritative for this fork. The inherited material remains under
 [Upstream srsRAN Project reference](#upstream-srsran-project-reference).
 
+## Deployment options and testbeds
+
+![KORA-oriented EdgeRIC deployment with alternative core, CU, DU, and RU placements](edgeric-v2/images/kora_edgeric_architecture.png)
+
+The diagram shows a KORA-oriented deployment; the component boundaries can be
+combined differently. Depending on the lab setup, the 5G core may be provided
+by Keysight CoreSIM, as part of a Keysight CuSIM deployment, or by another
+compatible implementation. The CU may be supplied by CuSIM or OCUDU/srsRAN.
+The OCUDU/srsRAN CU and DU may run as separate logical functions over F1 or
+together in one gNB process. The local RT-E2 agent connects the DU scheduler
+to EdgeRIC muApps over ZeroMQ and Protobuf.
+
+This repository is used with two complementary radio setups:
+
+- **Keysight Open RAN Architect (KORA), Split 7.2:** the O-DU and O-RU are
+  distinct logical functions, separated at an intra-PHY boundary and joined by
+  O-RAN Open Fronthaul. Keysight RuSIM provides the O-RU and UE side.
+- **UvA/SNE 5G/6G lab, Split 8:** the PHY remains with the OCUDU/srsRAN gNB,
+  while an Ettus Research USRP N310 provides the RF front end through UHD.
+  The N310 is an SDR in this split, not the Split 7.2 O-RU shown above; srsUE
+  with a USRP B210 provides the UE side.
+
 ## Setup
 
 Supported package-manager targets are Ubuntu 24.04 LTS and Debian 12/13. Run
@@ -104,7 +126,10 @@ Or pass another configuration explicitly:
 ./start_fns_gnb.sh /path/to/gnb-config.yaml
 ```
 
-### N310/UHD profile
+### N310 profile
+
+For a terminal-by-terminal walkthrough with representative output, see the
+[N310 and EdgeRIC demo](edgeric-v2/N310_EDGERIC_DEMO.md).
 
 The site-specific `configs/gnb_SNE_n310_fdd_n3_10mhz.yml` profile uses a USRP
 N310 through UHD (Split 8) and does not require DPDK. After completing the
