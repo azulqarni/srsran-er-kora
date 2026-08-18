@@ -1,4 +1,4 @@
-# srsRAN Project — EdgeRIC RT-E2 fork
+# srsRAN Project with EdgeRIC RT-E2 fork
 
 This repository uses [srsRAN Project](https://github.com/srsran/srsRAN_Project)
 25.04.0 as its base. It adds a local RT-E2 telemetry and control interface for
@@ -312,7 +312,7 @@ Then build the code-base:
     cd srsRAN_Project
     mkdir build
     cd build
-    cmake ../ 
+    cmake ../
     make -j $(nproc)
 ```
 
