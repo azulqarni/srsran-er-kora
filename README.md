@@ -237,8 +237,8 @@ commands.
 <a id="reference-1"></a>**[1]** Asim Zoulkarni, Chrysa Papagianni, George
 Iosifidis, Haoxin Sun, Francisco J. Garcia, and John S. Baras. “SLA-Aware RAN
 Slicing via Online Meta-Learning.” In *2026 IEEE International Mediterranean
-Conference on Communications and Networking (MeditCom)*, Cagliari, Italy, July
-2026.
+Conference on Communications and Networking (MeditCom)*, Cagliari, Italy, 2026,
+pp. 1–6. doi: [10.1109/MeditCom67211.2026.11641095](https://doi.org/10.1109/MeditCom67211.2026.11641095).
 
 <a id="reference-2"></a>**[2]** Woo-Hyun Ko, Ushasi Ghosh, Ujwal Dinesha,
 Raini Wu, Srinivas Shakkottai, and Dinesh Bharadia. “EdgeRIC: Empowering
