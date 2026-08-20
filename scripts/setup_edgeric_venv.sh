@@ -37,7 +37,7 @@ Options:
   -h, --help         Show this help
 
 The base environment supports CPython 3.10-3.13 and covers EdgeRIC messaging,
-testers, and the slice telemetry/control muApps. --with-muapps requires
+testers, slice telemetry/control muApps, and headless KPI plotting. --with-muapps requires
 CPython 3.10 or 3.11 because protected legacy code imports the removed stdlib
 imp module and uses NumPy's removed np.int alias.
 USAGE
@@ -262,7 +262,7 @@ if ! $generate_only; then
       --requirement "${requirements_dir}/muapps.txt"
   else
     "$venv_python" -I -m pip --isolated --require-virtualenv install --upgrade-strategy only-if-needed \
-      --requirement "${requirements_dir}/base.txt"
+      --requirement "${requirements_dir}/muapp5-plotting.txt"
   fi
   "$venv_python" -I -m pip --isolated --require-virtualenv check
 fi

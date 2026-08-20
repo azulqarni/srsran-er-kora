@@ -79,5 +79,8 @@ dump.rdb
 .mypy_cache/
 .ruff_cache/
 
-edgeric-v2/muApp5/logs/
-edgeric-v2/muApp5/archive/
+/edgeric-v2/muApp5/logs/
+/edgeric-v2/muApp5/figures/
+/edgeric-v2/muApp5/plots/
+/edgeric-v2/muApp5/archive/
+/edgeric-v2/muApp5/nohup.out

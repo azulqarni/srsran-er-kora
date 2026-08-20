@@ -1,48 +1,60 @@
-## Included EdgeRIC muApps (optional)
+# Included EdgeRIC muApps (optional)
 
-This repository extends the EdgeRIC-on-5G version used as its starting point
-and retains its per-UE muApps as optional functionality. The gNB, inter-slice
-RT-E2 extensions, and muApp5 use the base environment. The original README
-follows verbatim; this preface records current setup and validation.
+This directory contains the fork's optional per-UE EdgeRIC muApps, adapted
+from EdgeRIC-on-5G. They are separate from the native gNB build and the current
+inter-slice controller. Use the [repository README](../README.md) for supported
+gNB operation.
 
-### Setup
+## Supported muApp environment
 
-Use Python 3.10 or 3.11 (CPython) with `venv` support. Install it separately;
-the scripts neither install Python nor change the host default. Redis is needed
-only for muApp1 policy switching:
+From the repository root, use CPython 3.10 or 3.11 with `venv` support:
 
 ```bash
+# Install native dependencies and Redis only if they are not already managed.
 ./scripts/install_system_deps.sh --with-redis
-./scripts/setup_legacy_edgeric_venv.sh --clean
 ./scripts/setup_legacy_edgeric_venv.sh --python /path/to/python3.11
 source .venv-edgeric-legacy/bin/activate
-redis-cli PING  # expect PONG
+redis-cli PING  # required by muApp1; expect PONG
 ```
 
-The first command installs the native build dependencies, `redis-server`, and
-`redis-tools` system-wide; omit it when those are already managed. Python
-packages, caches, and generated bindings stay in `.venv-edgeric-legacy`.
-`--clean` removes only that environment, not Python, native packages, or
-Redis.
+The setup scripts do not install Python or change the host default. Packages,
+caches, and generated Protobuf bindings remain in `.venv-edgeric-legacy`. Use
+`./scripts/setup_legacy_edgeric_venv.sh --clean` only for an explicit
+environment reset.
 
-### Compatibility status
+## Compatibility status
 
-Testing with Python 3.11 confirmed Redis policy switching, the non-RL
-policies in `muApp1_run_DL_scheduling.py`, `muApp1_dummy_single_ue.py`, and
-`muApp3_monitor_terminal.py`.
+- Python 3.11 testing covered muApp1 Redis policy switching and non-RL
+  policies, `muApp1_dummy_single_ue.py`, and `muApp3_monitor_terminal.py`.
+- The bundled muApp1 RL checkpoints require exactly two simultaneously
+  reported UEs: three inputs per UE and six model inputs in total.
+- `muApp2_train_RL_DL_scheduling.py` is unvalidated offline two-UE simulator
+  training; it does not currently bind the live scheduling-control socket.
+- The graphical `muApp3_monitor.py` is unsupported: it uses an older messenger
+  API and calls Redis `FLUSHDB` at startup. Use the terminal monitor.
 
-- The bundled muApp1 RL checkpoints expect exactly two simultaneously reported
-  UEs: three inputs per UE and six model inputs in total.
-- Ray 2.10 is pinned because Ray 2.9 relies on a Setuptools-private path absent
-  from current Setuptools; a clean-install retest is pending.
-- `muApp2_train_RL_DL_scheduling.py` has not been validated in this fork. It
-  assumes two UEs, writes training outputs, and cannot run beside muApp1
-  because both own the scheduling-control socket.
-- The graphical `muApp3_monitor.py` does not match the included messenger API
-  and calls Redis `FLUSHDB` at startup. Use the terminal monitor.
+MuApp dependency pins, including Ray 2.10, are recorded in
+[`requirements/muapps.txt`](requirements/muapps.txt). The smoke check validates
+dependencies, imports, and Protobuf round trips; it does not exercise a live
+RAN, train a model, or validate checkpoint behavior.
 
-The setup smoke test checks dependencies and generated Protobuf bindings; it
-does not run a live muApp, load the checkpoints, or validate a RAN.
+## Notes on the retained historical instructions
+
+The material below is preserved for historical context. This preface and the
+repository README take precedence where they differ. In particular:
+
+- the supported isolated muApp environment is `.venv-edgeric-legacy`;
+- the current messenger method is `get_metrics()`, and muApp1 policy selection
+  is Redis-driven rather than configured at the historical source line numbers;
+- run muApp1 from `edgeric-v2/muApp1`, where checkpoints are under
+  `./rl_model/`;
+- the muApp2 config is `conf/edge_ric.yaml`, and a model intended for muApp1
+  belongs under `../muApp1/rl_model/`; and
+- `srsenb` and RBG are inherited LTE terminology; this fork controls an NR gNB
+  using PRBs.
+
+Example control publishers are blocking processes, example RNTIs must be
+reviewed before use, and only one process may bind each control endpoint.
 
 ---
 

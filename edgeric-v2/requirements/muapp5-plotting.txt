@@ -1,0 +1,5 @@
+-r base.txt
+
+# Headless KPI plotting for muApp5. This pin supports the base environment's
+# CPython 3.10-3.13 range without pulling in the legacy RL/muApp stack.
+matplotlib==3.10.8

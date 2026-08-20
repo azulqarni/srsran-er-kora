@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import io
 from pathlib import Path
 import subprocess
 import sys
@@ -26,6 +27,10 @@ def main() -> int:
     sys.path[:0] = [str(edgeric_dir), str(protobuf_dir)]
 
     import google.protobuf
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
     import numpy
     import zmq
     from protobufs import control_mcs_pb2
@@ -54,6 +59,13 @@ def main() -> int:
     importlib.import_module("send_mcs")
     importlib.import_module("send_weight")
 
+    figure = plt.figure(figsize=(1, 1))
+    output = io.BytesIO()
+    figure.savefig(output, format="pdf")
+    plt.close(figure)
+    if not output.getvalue().startswith(b"%PDF"):
+        raise RuntimeError("Matplotlib in-memory PDF export failed")
+
     subprocess.run(
         [
             sys.executable,
@@ -76,7 +88,6 @@ def main() -> int:
             "gym",
             "hydra",
             "kaleido",
-            "matplotlib.pyplot",
             "pandas",
             "PIL.Image",
             "plotly.express",
@@ -97,6 +108,7 @@ def main() -> int:
 
     print(f"Python: {sys.version.split()[0]} ({sys.executable})")
     print(f"Python Protobuf runtime: {google.protobuf.__version__}")
+    print(f"Matplotlib: {matplotlib.__version__}")
     print(f"NumPy: {numpy.__version__}")
     print(f"PyZMQ: {zmq.__version__}; libzmq: {zmq.zmq_version()}")
     print("EdgeRIC import and Protobuf round-trip smoke check: PASS")
