@@ -7,8 +7,7 @@ Split 7/Split 8 selection. This fork adapts per-UE telemetry and control from
 UCSD WCSNG's
 [EdgeRIC-on-5G](https://github.com/ucsdwcsng/EdgeRIC-on-5G) and extends the
 EdgeRIC design [[2]](#reference-2) with inter-slice telemetry and control on
-those native slicing abstractions. The workflow below is specific to this fork;
-general documentation is linked under
+those native slicing abstractions. General documentation is linked under
 [srsRAN Project resources](#srsran-project-resources).
 
 ## Deployment context
@@ -36,7 +35,7 @@ Ubuntu 24.04 LTS and Debian 12/13.
 ### Split-7.2 with DPDK
 
 This DPDK build was validated on the Keysight Open RAN Architect (KORA)
-testbed used in the MeditCom study [[1]](#reference-1). It uses the bundled FNS
+testbed used in [[1]](#reference-1). It uses the bundled FNS
 configuration:
 
 ```bash
@@ -55,8 +54,7 @@ Use this profile for a UHD radio such as a USRP N310; DPDK is not needed:
 ./build-srs-gnb-er.sh --clean --uhd
 ```
 
-Both profiles write `build/apps/gnb/gnb`. A raw-socket, non-DPDK build uses the
-base installer and build command without either hardware option. Use
+Both profiles write `build/apps/gnb/gnb`. Use
 `./scripts/install_system_deps.sh --dry-run` to see the exact apt actions.
 System packages remain installed if the clone is removed; the build tree,
 virtual environments, and generated bindings stay inside the clone.
@@ -71,7 +69,7 @@ virtual environments, and generated bindings stay inside the clone.
 - **ZeroMQ:** The source requires `libzmq >=4.0` and `cppzmq >=4.7`; all
   supported distro packages satisfy this. Python uses `pyzmq==27.1.0` (import
   name `zmq`). Native and Python versions need not match across the IPC boundary.
-- **Python:** The base EdgeRIC environment supports Python 3.10–3.13 (CPython).
+- **Python:** The base EdgeRIC environment supports Python 3.10–3.13.
   NumPy is pinned to 1.23.5 on 3.10/3.11, 1.26.4 on 3.12, and 2.2.6 on 3.13.
   The included RL muApps require Python 3.10 or 3.11.
 - **Native build:** CMake 3.14+, a C++17 compiler, and FFTW 3.0+ are required.
@@ -103,8 +101,7 @@ Before compiling:
   smoke test pass.
 
 Then rerun setup and perform the clean build for the chosen profile. The
-included RL muApp Python limit is a known compatibility constraint, not an
-untested gate.
+included RL muApp Python limit is a known compatibility constraint.
 
 ## Running
 
@@ -121,17 +118,14 @@ isolation, and device permissions for the host, then run:
 
 ### UHD
 
-Keep site-specific UHD profiles with the deployment that owns them. The tracked
-`configs/gnb_rf_n310_fdd_n3_20mhz.yml` is a sanitized starting example. Copy it
-to a deployment-owned path before editing:
-
-```bash
-cp configs/gnb_rf_n310_fdd_n3_20mhz.yml /path/to/site-specific-n310.yml
-```
+Keep deployment-specific UHD profiles outside the public repository. The tracked
+`configs/gnb_rf_n310_fdd_n3_20mhz.yml` is a generic 20 MHz example, not the
+profile used for the captured run. Use it as a reference when creating a
+deployment-specific profile.
 
 Review the AMF and bind addresses, N310 address and device arguments, clock and
 time sources, gains, band, channel bandwidth, PLMN, TAC, and slice settings.
-Then pass the deployment-owned profile explicitly:
+Then pass the deployment-specific profile explicitly:
 
 ```bash
 ./start_fns_gnb.sh /path/to/site-specific-n310.yml
@@ -140,11 +134,10 @@ Then pass the deployment-owned profile explicitly:
 For a terminal-by-terminal walkthrough with representative output, see the
 [N310 and EdgeRIC demo](edgeric-v2/N310_EDGERIC_DEMO.md).
 
-The launcher uses `build/apps/gnb/gnb`, starts the gNB as a transient root
-service, and assigns its IPC files to the invoking user's primary group with a
-group-writable umask. EdgeRIC and muApp Python processes can therefore run as
-the normal user—do not run them with `sudo`. Set `GNB_GROUP` to another group
-only when the invoking user is already a member of it.
+The launcher starts `build/apps/gnb/gnb` as a transient root systemd service
+and makes its IPC files group-writable for the invoking user's primary group.
+Run EdgeRIC and muApp Python processes as an unprivileged user. Set `GNB_GROUP`
+to another group only when the invoking user is already a member of it.
 
 In another terminal, activate the base environment:
 
@@ -167,8 +160,7 @@ python edgeric-v2/muApp4/slice_metrics.py
 Both monitors are blocking; use separate activated terminals to run them at the
 same time.
 
-Stop the transient gNB service authoritatively from another terminal and verify
-that it is inactive:
+Stop the gNB service from another terminal and verify that it is inactive:
 
 ```bash
 sudo systemctl stop gnb.service
@@ -176,7 +168,7 @@ systemctl is-active gnb.service  # expect: inactive
 ```
 
 `Ctrl-C` in the attached gNB terminal may stop the process or may only detach
-from the transient service; always verify its state with `systemctl is-active`.
+from the service; always verify its state with `systemctl is-active`.
 Only one slice-budget publisher may bind `ipc:///tmp/control_slice_budgets` at
 a time. The gNB retains the last received slice-budget policy after that
 publisher exits, so restart the gNB before a subsequent baseline run to restore

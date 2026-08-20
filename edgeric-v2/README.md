@@ -7,7 +7,7 @@ operation.
 
 ## Supported muApp environment
 
-From the repository root, use CPython 3.10 or 3.11 with `venv` support:
+From the repository root, use Python 3.10 or 3.11 with `venv` support:
 
 ```bash
 # Install native dependencies and Redis only if they are not already managed.
@@ -22,21 +22,19 @@ caches, and generated Protobuf bindings remain in `.venv-edgeric-legacy`. Use
 `./scripts/setup_legacy_edgeric_venv.sh --clean` only for an explicit
 environment reset.
 
-## Compatibility status
+## muApp notes
 
-- Python 3.11 testing covered muApp1 Redis policy switching and non-RL
-  policies, `muApp1_dummy_single_ue.py`, and `muApp3_monitor_terminal.py`.
+- muApp1 selects policies through Redis; `muApp1_dummy_single_ue.py` provides
+  a single-UE control-path example.
 - The bundled muApp1 RL checkpoints require exactly two simultaneously
   reported UEs: three inputs per UE and six model inputs in total.
-- `muApp2_train_RL_DL_scheduling.py` is unvalidated offline two-UE simulator
-  training; it does not currently bind the live scheduling-control socket.
-- The graphical `muApp3_monitor.py` is unsupported: it uses an older messenger
-  API and calls Redis `FLUSHDB` at startup. Use the terminal monitor.
+- `muApp2_train_RL_DL_scheduling.py` provides offline two-UE simulator
+  training and does not bind the live scheduling-control socket.
+- The graphical `muApp3_monitor.py` uses an older messenger API and calls Redis
+  `FLUSHDB` at startup. Use the terminal monitor.
 
-MuApp dependency pins, including Ray 2.10, are recorded in
-[`requirements/muapps.txt`](requirements/muapps.txt). The smoke check validates
-dependencies, imports, and Protobuf round trips; it does not exercise a live
-RAN, train a model, or validate checkpoint behavior.
+muApp dependencies, including Ray 2.10, are pinned in
+[`requirements/muapps.txt`](requirements/muapps.txt).
 
 ## Notes on the retained historical instructions
 
@@ -45,7 +43,7 @@ repository README take precedence where they differ. In particular:
 
 - the supported isolated muApp environment is `.venv-edgeric-legacy`;
 - the current messenger method is `get_metrics()`, and muApp1 policy selection
-  is Redis-driven rather than configured at the historical source line numbers;
+  is Redis-driven;
 - run muApp1 from `edgeric-v2/muApp1`, where checkpoints are under
   `./rl_model/`;
 - the muApp2 config is `conf/edge_ric.yaml`, and a model intended for muApp1
@@ -61,7 +59,7 @@ reviewed before use, and only one process may bind each control endpoint.
 ## Running EdgeRIC 
  
 Create the repository-local environment from the repository root first. The
-full muApps require CPython 3.10 or 3.11:
+full muApps require Python 3.10 or 3.11:
 
 ```bash
 ./scripts/setup_edgeric_venv.sh --venv .venv-muapps --python python3.11 --with-muapps
