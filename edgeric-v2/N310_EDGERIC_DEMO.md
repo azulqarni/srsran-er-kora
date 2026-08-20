@@ -43,8 +43,7 @@ N310 networking, timing, and RF separately.
 On the gNB host:
 
 ```bash
-git clone --branch uhd-legacy-validation --single-branch \
-  https://github.com/azulqarni/srsran-er-kora.git
+git clone https://github.com/azulqarni/srsran-er-kora.git
 cd srsran-er-kora
 
 ./scripts/install_system_deps.sh --with-uhd
@@ -52,9 +51,8 @@ cd srsran-er-kora
 ./build-srs-gnb-er.sh --clean --uhd
 ```
 
-The captured run used `uhd-legacy-validation` at commit `f6aae3e`. This
-validation branch will be merged into `main`; clone `main` instead after that
-merge.
+The captured run used commit `f6aae3e`; the commands below retain that run's
+output as provenance while using the current `main` branch for setup.
 
 `install_system_deps.sh` installs native build and UHD packages system-wide;
 they remain after the clone is deleted. `setup_edgeric_venv.sh` creates the
@@ -324,11 +322,14 @@ a control experiment to restore the configuration baseline.
 ## 9. Shutdown
 
 Stop `iperf3`, the flipper, both telemetry monitors, and the UE with `Ctrl-C`.
-Then stop the gNB with `Ctrl-C` in its attached terminal or:
+Stop the transient gNB service authoritatively from another terminal and verify
+that it is inactive:
 
 ```bash
 sudo systemctl stop gnb.service
-systemctl is-active gnb.service
+systemctl is-active gnb.service  # expect: inactive
 ```
 
+`Ctrl-C` in the attached gNB terminal may stop the process or may only detach
+from the transient service; always verify its state with `systemctl is-active`.
 Press `Ctrl-]` three times to detach without stopping the gNB.

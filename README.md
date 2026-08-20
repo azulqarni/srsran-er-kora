@@ -131,20 +131,26 @@ Or pass another configuration explicitly:
 For a terminal-by-terminal walkthrough with representative output, see the
 [N310 and EdgeRIC demo](edgeric-v2/N310_EDGERIC_DEMO.md).
 
-The site-specific `configs/gnb_SNE_n310_fdd_n3_10mhz.yml` profile uses a USRP
-N310 through UHD (Split 8) and does not require DPDK. After completing the
-common Python environment setup above, install UHD support, build the
-UHD-enabled gNB, and pass the profile explicitly:
+The tracked `configs/gnb_rf_n310_fdd_n3_20mhz.yml` profile is a sanitized
+starting point, not a deployment-ready configuration. Keep site-specific
+profiles outside the public repository and copy the generic profile before
+editing it:
+
+```bash
+cp configs/gnb_rf_n310_fdd_n3_20mhz.yml /path/to/site-specific-n310.yml
+```
+
+Review the AMF and bind addresses, N310 address and device arguments, clock and
+time sources, gains, band, channel bandwidth, PLMN, TAC, and slice settings.
+After completing the common Python environment setup above, install UHD
+support, build the UHD-enabled gNB, and start it with the deployment-owned
+profile:
 
 ```bash
 ./scripts/install_system_deps.sh --with-uhd
 ./build-srs-gnb-er.sh --clean --uhd
-./start_fns_gnb.sh configs/gnb_SNE_n310_fdd_n3_10mhz.yml
+./start_fns_gnb.sh /path/to/site-specific-n310.yml
 ```
-
-Review the AMF and bind addresses, N310 address, external clock and time
-sources, gains, PLMN, TAC, and cell parameters for the target testbed. The
-N310 profile has no DPDK `hal` section and does not configure multiple slices.
 
 The launcher uses `build/apps/gnb/gnb`, starts the gNB as a transient root
 service, and assigns its IPC files to the invoking user's primary group with a
