@@ -122,13 +122,23 @@ isolation, and device permissions for the host, then run:
 ### UHD
 
 Keep site-specific UHD profiles with the deployment that owns them. The tracked
-`configs/gnb_rf_n310_fdd_n3_20mhz.yml` is only a starting example; review the
-AMF/bind addresses, device arguments, clock/sync sources, gains, radio settings,
-PLMN, and TAC. Pass the deployment profile explicitly:
+`configs/gnb_rf_n310_fdd_n3_20mhz.yml` is a sanitized starting example. Copy it
+to a deployment-owned path before editing:
+
+```bash
+cp configs/gnb_rf_n310_fdd_n3_20mhz.yml /path/to/site-specific-n310.yml
+```
+
+Review the AMF and bind addresses, N310 address and device arguments, clock and
+time sources, gains, band, channel bandwidth, PLMN, TAC, and slice settings.
+Then pass the deployment-owned profile explicitly:
 
 ```bash
 ./start_fns_gnb.sh /path/to/site-specific-n310.yml
 ```
+
+For a terminal-by-terminal walkthrough with representative output, see the
+[N310 and EdgeRIC demo](edgeric-v2/N310_EDGERIC_DEMO.md).
 
 The launcher uses `build/apps/gnb/gnb`, starts the gNB as a transient root
 service, and assigns its IPC files to the invoking user's primary group with a
