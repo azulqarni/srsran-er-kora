@@ -15,7 +15,7 @@ distinct logical functions connected over O-RAN Open Fronthaul, and Keysight
 RuSIM provides the O-RU and UE side. This guide uses Split 8 instead: the PHY
 remains in the OCUDU/srsRAN gNB, while an Ettus Research USRP N310 provides the
 RF front end through UHD. The N310 is an SDR in this split, not the Split 7.2
-O-RU shown above; srsUE with a USRP provides the UE side.
+O-RU shown above; srsUE with a USRP B210 provides the UE side.
 
 In either setup, the 5G core may be Keysight CoreSIM, part of a Keysight CuSIM
 deployment, or another compatible implementation. The CU may be supplied by
@@ -83,16 +83,12 @@ uhd_usrp_probe --args="type=n3xx,addr=<N310_IP>"
 ## 2. Prepare the site configuration
 
 Keep the deployment-specific configuration outside the public repository.
-The tracked generic 20 MHz profile can be copied as a sanitized starting
-point:
+The tracked `configs/gnb_rf_n310_fdd_n3_20mhz.yml` is a generic 20 MHz
+example, not the profile used for the captured run. Use it as a reference when
+creating a deployment-specific profile.
 
-```bash
-cp configs/gnb_rf_n310_fdd_n3_20mhz.yml /path/to/site-specific-n310.yml
-```
-
-It will not reproduce the captured 10 MHz/52-PRB output unchanged. Review the
-AMF and bind addresses, N310 address and device arguments, clock and time
-sources, gains, band, channel bandwidth, PLMN, TAC, and slice settings. The
+Review the AMF and bind addresses, N310 address and device arguments, clock and
+time sources, gains, band, channel bandwidth, PLMN, TAC, and slice settings. The
 captured run used a deployment-owned 10 MHz band-3 profile.
 
 ## 3. Start the gNB
@@ -103,7 +99,7 @@ In gNB terminal 1, from the repository root:
 ./start_fns_gnb.sh /path/to/site-specific-n310.yml
 ```
 
-The launcher uses `build/apps/gnb/gnb` and starts a transient systemd service.
+The launcher uses `build/apps/gnb/gnb` and starts `gnb.service` with systemd.
 Representative success output is:
 
 ```text
@@ -322,8 +318,7 @@ a control experiment to restore the configuration baseline.
 ## 9. Shutdown
 
 Stop `iperf3`, the flipper, both telemetry monitors, and the UE with `Ctrl-C`.
-Stop the transient gNB service authoritatively from another terminal and verify
-that it is inactive:
+Stop the gNB service from another terminal and verify that it is inactive:
 
 ```bash
 sudo systemctl stop gnb.service
@@ -331,5 +326,5 @@ systemctl is-active gnb.service  # expect: inactive
 ```
 
 `Ctrl-C` in the attached gNB terminal may stop the process or may only detach
-from the transient service; always verify its state with `systemctl is-active`.
+from the service; always verify its state with `systemctl is-active`.
 Press `Ctrl-]` three times to detach without stopping the gNB.

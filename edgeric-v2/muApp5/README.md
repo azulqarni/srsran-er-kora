@@ -1,8 +1,6 @@
 # muApp5
 
-This directory contains this fork's live RT-E2 slicing controller. The related
-research is cited in the [repository README](../../README.md#reference-1), but
-the source here is authoritative for deployed behavior. Complete the
+This directory contains this fork's live RT-E2 slicing controller. Complete the
 [repository setup](../../README.md#setup) before running it.
 
 ## Code map
@@ -30,7 +28,7 @@ deployment.
 Only slices 2–6 participate in the learned share vector. Every command also
 sets built-in slice 0 to `min_prb = 0` and `max_prb =` the current cell PRB
 capacity, and sets built-in slice 1 to `min_prb = max_prb = 0`. Map data DRBs to
-slices 2–6; slice 1 is intentionally disabled.
+slices 2–6; the default unconfigured slice (slice 1) remains disabled.
 
 The controller publishes its initial allocation before collecting a complete
 learning block. Each block contains `K` accepted, distinct, positive metric TTI
@@ -54,7 +52,7 @@ Run only one process that binds the slice-budget output endpoint.
 ## Run and stop
 
 From the repository root, create the base environment if needed, activate it,
-and start the controller as the normal user:
+and start the controller as an unprivileged user:
 
 ```bash
 ./scripts/setup_edgeric_venv.sh
